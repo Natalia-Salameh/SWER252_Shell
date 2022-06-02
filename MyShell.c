@@ -34,6 +34,10 @@ void exec(char ** args) {
     /*Check if the command is cd*/
     cd(args);
   }
+  if (strcmp(args[0], "exit") == 0) {
+    /*exit*/
+    exit(0);
+  }
 
   pid_t child_pid = fork();
 
