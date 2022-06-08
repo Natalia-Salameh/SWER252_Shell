@@ -13,13 +13,14 @@
 #include <dirent.h>
 #include <stdbool.h>
 #include <errno.h>
-#include<readline/readline.h>
-#include<readline/history.h>
+#include <readline/readline.h>
+#include <readline/history.h>
 #define clear() printf("\033[H\033[J")
 
 void help() {
-  puts("\nTry these are the Available Commands: :)"
+  puts("\nTry these Available Commands: :)"
     "\n-(pwd) (cd) (ps) (kill) (exit)-"
+    "\n-You can view your shell command history by pressing on the up/down key-\n"
   );
 
 }
@@ -31,39 +32,43 @@ void pwd() {
 
 void cd(char ** args) {
 
+  /*Check if the path is null*/
   if (args[1] == NULL) {
-    /*Check if the path is null*/
-    chdir(getenv("HOME")); /*Go back to home directory if null*/
+    /*Go back to home directory if null*/
+    chdir(getenv("HOME"));
 
-  } else if (chdir(args[1]) == -1) {
     /*Take the path from the user*/
+  } else if (chdir(args[1]) == -1) {
     printf("%s: No such file or directory\n", args[1]);
   }
 }
 
 void ps() {
-  char flag, * t;
+  char flag, * t; /*T,F*/
   char cmd[700], tty_self[700], path[700], time_s[700];
-  FILE * f;
-  DIR * d;
-  struct dirent * dir;
-  int i, fd_self, fd;
+  struct dirent * dir; /*returns dir entries*/
+  int i, fd;
   unsigned long time, stime;
 
+  printf("%6s %s\t%8s %s\n", "PID", "TTY", "TIME", "CMD");
+
   /*Open Directory*/
-  d = opendir("/proc");
-  /*Open file directory*/
-  fd_self = open("/proc/self/fd/0", O_RDONLY);
+  DIR * d = opendir("/proc");
+  if (d == NULL) {
+    perror("DIR: Unable to open directory");
+    exit(1);
+  }
+
+  /*Read file*/
+  int fd_self = open("/proc/self/fd/0", O_RDONLY);
 
   sprintf(tty_self, "%s", ttyname(fd_self));
 
-  printf("%5s %s\t%8s %s\n", "PID", "TTY", "TIME", "CMD");
-
-  /*Read file*/
+  /*Read directory*/
   while ((dir = readdir(d)) != NULL) {
-
     flag = 1;
     for (i = 0; dir -> d_name[i]; i++) {
+      /*null terminated filen*/
       if (!isdigit(dir -> d_name[i])) {
         flag = 0;
         break;
@@ -71,20 +76,21 @@ void ps() {
     }
 
     if (flag) {
-
+      /*PID*/
       sprintf(path, "/proc/%s/fd/0", dir -> d_name);
 
       fd = open(path, O_RDONLY);
-
+      /*TTY*/
       if (ttyname(fd) && strcmp(ttyname(fd), tty_self) == 0) {
 
         sprintf(path, "/proc/%s/stat", dir -> d_name);
 
-        f = fopen(path, "r");
+          FILE *f = fopen(path, "r"); /*Opens a file for reading*/
 
+        /*CMD*/
         fscanf(f, "%d%s%c%c%c", & i, cmd, & flag, & flag, & flag);
-
-        cmd[strlen(cmd) - 1] = '\0';
+        /*Remove Right brucket*/
+        cmd[(strlen(cmd) - 1)] = '\0';
 
         for (i = 0; i < 11; i++) {
           fscanf(f, "%lu", & time);
@@ -103,29 +109,29 @@ void ps() {
   }
 }
 
-
 void exec(char ** args) {
-  if (strcmp(args[0], "exit") == 0){
-  clear();
-   exit(0);
-   }
+  if (strcmp(args[0], "exit") == 0) {
+    clear();
+    exit(0);
+  } /*Check if the command is pwd*/
   else if (strcmp(args[0], "pwd") == 0) {
-    /*Check if the command is pwd*/
     pwd();
-  } else if (strcmp(args[0], "cd") == 0) {
     /*Check if the command is cd*/
+  } else if (strcmp(args[0], "cd") == 0) {
     cd(args);
   } else if (strcmp(args[0], "ps") == 0) {
     if (args[1] == NULL) {
+      /*To list a brief of the processes running on the system*/
       ps();
     } else if (strcmp(args[1], "-A") == 0) {
+      /*To list every process running on the system*/
       system("ps -A");
     }
   } else if (strcmp(args[0], "help") == 0) {
     help();
   } else {
     printf("command '%s' not found\n", args[0]);
-    }
+  }
 
   pid_t child_pid = fork();
 
@@ -199,7 +205,7 @@ int main() {
     char * line = readline("$ ");
     char ** tokens = split_line(line);
 
-    rl_bind_key('\t', rl_complete);
+    rl_bind_key('\t', rl_insert);
     add_history(line);
 
     if (tokens[0] != NULL) {
