@@ -25,10 +25,15 @@ void Intro(){
 
 void help() {
   puts("\nTry these Available Commands: :)"
-    "\n-(pwd) (cd) (ps) (kill) (exit) (clear)-"
-    "\n-You can view your shell command history by pressing on the up/down key-\n"
-  );
-
+ "\n a) pwd command: gets the current working directory."
+ "\n b) cd command: changes the directory depending on users input." 
+ "\n c) ps command: lists small subsets of the current running processes on the system."
+ "\n ps -A: Lists all the running processes on the system."
+ "\n d)kill command: kills the signal by kill PID or kill name."
+ "\n e)history: gets the recent entered shell commands."
+ "\n f)exit: exit the shell."
+ "\n g)clear: clears the shell."
+ "\n h)You can view your shell command history by pressing on the up/down key\n");
 }
 
 void pwd() {
