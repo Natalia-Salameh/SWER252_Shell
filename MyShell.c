@@ -17,9 +17,15 @@
 #include <readline/history.h>
 #define clear() printf("\033[H\033[J")
 
+void Intro(){
+  puts("\n ~Welcome to Natalia's Shell~\n");
+  sleep(1);
+  clear();
+}
+
 void help() {
   puts("\nTry these Available Commands: :)"
-    "\n-(pwd) (cd) (ps) (kill) (exit)-"
+    "\n-(pwd) (cd) (ps) (kill) (exit) (clear)-"
     "\n-You can view your shell command history by pressing on the up/down key-\n"
   );
 
@@ -37,10 +43,9 @@ void cd(char ** args) {
     /*Go back to home directory if null*/
     chdir(getenv("HOME"));
 
-    /*Take the path from the user*/
   } else if (chdir(args[1]) == -1) {
     printf("%s: No such file or directory\n", args[1]);
-  }
+  } else chdir(args[1]);
 }
 
 void ps() {
@@ -109,6 +114,37 @@ void ps() {
   }
 }
 
+
+void killc(char ** args) {
+    pid_t pid;
+    int p,n;
+    int i = 1;
+    char *name;
+    
+    while(args[i] != NULL){
+    if(isdigit(*args[i])){
+    pid = atoi(args[i]); /*Convert entered pid from string to int*/
+    p = kill(pid, SIGTERM); /*kill the signal*/
+      if (p == 0) {
+      printf("(pid: %d) -killed\n", pid);
+    } else {
+    //perror("kill");
+    printf("%s: (%d) -No such process\n", args[0], pid);
+    } 
+    }else{
+    	name = args[i]; /*kill the signal by name*/
+    n = kill(*name,SIGTERM);
+    if (n == 0) {
+      printf("(pid: %s) -killed\n", name);
+    } else {
+    //perror("kill");
+    printf("%s: (%s) -No such process\n", args[0], name);
+    } 
+   }
+    i++;
+  } 
+}
+
 void exec(char ** args) {
   if (strcmp(args[0], "exit") == 0) {
     clear();
@@ -129,19 +165,12 @@ void exec(char ** args) {
     }
   } else if (strcmp(args[0], "help") == 0) {
     help();
+  } else if (strcmp(args[0], "clear") == 0) {
+    clear();
+  } else if (strcmp(args[0], "kill") == 0) {
+    killc(args);
   } else {
-    printf("command '%s' not found\n", args[0]);
-  }
-
-  pid_t child_pid = fork();
-
-  if (child_pid == 0) {
-    exit(1);
-  } else if (child_pid > 0) {
-    int status;
-    do {
-      waitpid(child_pid, & status, WUNTRACED);
-    } while (!WIFEXITED(status) && !WIFSIGNALED(status));
+    printf("%s: command not found\n", args[0]);
   }
 
 }
@@ -179,33 +208,18 @@ char ** split_line(char * line) {
   return tokens;
 }
 
-char * read_line() {
-
-  char * line;
-  size_t buflen = 0;
-  errno = 0;
-  ssize_t strlen = getline( & line, & buflen, stdin);
-  if (strlen < 0) {
-    if (errno) {
-      perror("Myshell");
-    }
-    exit(1);
-  }
-
-  return line;
-}
-
 int main() {
   clear();
+  Intro();
   while (1) {
-
     char cmd[700];
     printf("%s@%s", getenv("LOGNAME"), getcwd(cmd, 700));
 
     char * line = readline("$ ");
+        if(line != NULL)
+    	add_history(line);
     char ** tokens = split_line(line);
-
-    rl_bind_key('\t', rl_insert);
+    
     add_history(line);
 
     if (tokens[0] != NULL) {
