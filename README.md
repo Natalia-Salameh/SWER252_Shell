@@ -21,10 +21,10 @@ gcc MyShell.c -o MyShell -lreadline
 
 Done by: Natalia Salameh-202006019
 
-resources: https://github.com/patoliyam/Basic-Shell-Implementation-in-C/blob/master/group-29-c-shell.c
-           https://brennan.io/2015/01/16/write-a-shell-in-c/
-           https://github.com/dmulholl/kash/blob/master/src/kash.c
-           https://github.com/deepakrenni/PS-/blob/master/ps%20Implementation%20using%20C
-           https://gist.github.com/DendiBot/ed66adfb03c1d000c4a746756900ba1a
+resources: 1)https://github.com/patoliyam/Basic-Shell-Implementation-in-C/blob/master/group-29-c-shell.c
+           2)https://brennan.io/2015/01/16/write-a-shell-in-c/
+           3)https://github.com/dmulholl/kash/blob/master/src/kash.c
+           4)https://github.com/deepakrenni/PS-/blob/master/ps%20Implementation%20using%20C
+           5)https://gist.github.com/DendiBot/ed66adfb03c1d000c4a746756900ba1a
            
 
