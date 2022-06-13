@@ -15,3 +15,16 @@ b)help: menu of available commands to use.
 c)intro: welcoming intro to the shell.
 d)exit: exit the shell.
 e)clear: clears the shell.
+
+You can launch it by putting this command:
+gcc MyShell.c -o MyShell -lreadline
+
+Done by: Natalia Salameh-202006019
+
+resources: https://github.com/patoliyam/Basic-Shell-Implementation-in-C/blob/master/group-29-c-shell.c
+           https://brennan.io/2015/01/16/write-a-shell-in-c/
+           https://github.com/dmulholl/kash/blob/master/src/kash.c
+           https://github.com/deepakrenni/PS-/blob/master/ps%20Implementation%20using%20C
+           https://gist.github.com/DendiBot/ed66adfb03c1d000c4a746756900ba1a
+           
+
