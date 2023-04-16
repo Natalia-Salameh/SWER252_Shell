@@ -24,7 +24,6 @@ gcc MyShell.c -o MyShell -lreadline
 This shell was developed by Natalia Salameh (202006019). 
 
 Used the following resources as references:
-resources: 
 - https://github.com/patoliyam/Basic-Shell-Implementation-in-C/blob/master/group-29-c-shell.c
 - https://brennan.io/2015/01/16/write-a-shell-in-c/
 - https://github.com/dmulholl/kash/blob/master/src/kash.c
